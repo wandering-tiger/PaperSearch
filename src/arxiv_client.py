@@ -5,14 +5,14 @@ class ArxivClient:
     def __init__(self):
         self.client = arxiv.Client()
 
-    def search_papers(self, query: str, max_results: int = 10) -> List[Dict]:
+    def search_papers(self, query: str, max_results: int = 50, sort_by=arxiv.SortCriterion.Relevance) -> List[Dict]:
         """
         Search for papers on Arxiv.
         """
         search = arxiv.Search(
             query=query,
             max_results=max_results,
-            sort_by=arxiv.SortCriterion.SubmittedDate
+            sort_by=sort_by
         )
 
         results = []

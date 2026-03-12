@@ -2,16 +2,17 @@ import os
 from openai import OpenAI
 
 class LLMClient:
-    def __init__(self, api_key=None, base_url=None):
-        # GitHub Copilot currently does not provide a public REST API for direct usage in scripts 
-        # like this. However, you can use the OpenAI API format which is standard.
-        # You can use an OpenAI Key, or a local model (like Ollama, LM Studio) that provides
-        # an OpenAI-compatible endpoint.
+    def __init__(self, api_key=None, base_url=None, model=None):
+        # Initialize OpenAI client with environment variables or provided arguments
+        # This works for OpenAI, DeepSeek, GitHub Models (Copilot), and local LLMs (Ollama)
         
         self.client = OpenAI(
             api_key=api_key or os.environ.get("OPENAI_API_KEY"),
             base_url=base_url or os.environ.get("OPENAI_BASE_URL")
         )
+        # Default to gpt-5.4 if not specified in env or args
+        self.model = model or os.environ.get("MODEL_NAME") or "gpt-5.4"
+        print(f"Initialized LLMClient with model: {self.model} at {self.client.base_url}")
 
     def screen_paper(self, paper_title: str, paper_summary: str, criteria: str) -> dict:
         """
@@ -32,7 +33,7 @@ class LLMClient:
 
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4o-mini", # Or any other model available to your API key
+                model=self.model, 
                 messages=[
                     {"role": "system", "content": "You are a helpful research assistant."},
                     {"role": "user", "content": prompt}
